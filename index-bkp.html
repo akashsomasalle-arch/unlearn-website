@@ -1,0 +1,1362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Intelligent File Browser – Soilunz</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --cream: #f2ede6;
+        --cream-dark: #e8e2d9;
+        --charcoal: #1a1a1a;
+        --dark-bg: #111111;
+        --mid: #555555;
+        --light: #999999;
+        --accent-blue: #2563eb;
+        --accent-teal: #14b8a6;
+        --white: #ffffff;
+        --border: #d8d2c8;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--cream);
+        color: var(--charcoal);
+        overflow-x: hidden;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 48px;
+        background: rgba(17, 17, 17, 0.92);
+        backdrop-filter: blur(8px);
+      }
+      /* .nav-logo {
+        color: var(--white);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+      } */
+      .nav-logo img {
+        height: 40px; /* adjust as needed */
+        width: auto;
+        display: block;
+      }
+      .nav-links {
+        display: flex;
+        gap: 32px;
+      }
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: #fff;
+      }
+      .nav-cta {
+        background: var(--white);
+        color: var(--charcoal);
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .nav-cta:hover {
+        opacity: 0.85;
+      }
+
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        height: 95vh;
+        min-height: 600px;
+        background: var(--dark-bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+      }
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: url("assets/landingpage_background.png");
+        opacity: 0.35;
+        background-image: url("assets/landingpage_background.png");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 0 24px;
+      }
+      .hero-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+        margin-bottom: 18px;
+      }
+      .hero h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(40px, 6vw, 80px);
+        color: var(--white);
+        line-height: 1.1;
+        font-weight: 700;
+        max-width: 760px;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--accent-teal);
+      }
+      .hero-sub {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 16px;
+        max-width: 480px;
+        margin: 20px auto 36px;
+        line-height: 1.6;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        background: var(--white);
+        color: var(--charcoal);
+        padding: 13px 28px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .btn-primary:hover {
+        opacity: 0.88;
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--white);
+        padding: 12px 28px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      .btn-outline:hover {
+        border-color: #fff;
+      }
+      .hero-scroll {
+        position: absolute;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+      }
+
+      /* ── TRUST BAR ── */
+      .trust-bar {
+        background: var(--cream);
+        padding: 64px 80px 56px;
+      }
+      .trust-bar h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(26px, 3.5vw, 42px);
+        font-weight: 600;
+        line-height: 1.25;
+        max-width: 480px;
+        margin-bottom: 48px;
+      }
+      .stats-row {
+        display: flex;
+        gap: 64px;
+        flex-wrap: wrap;
+        margin-bottom: 52px;
+      }
+      .stat-item {
+      }
+      .stat-num {
+        font-size: clamp(32px, 4vw, 52px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--mid);
+        margin-top: 6px;
+      }
+      .founder-block {
+        display: flex;
+        gap: 28px;
+        align-items: flex-start;
+        background: var(--white);
+        border-radius: 12px;
+        padding: 28px 32px;
+        max-width: 680px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      }
+      .founder-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: var(--cream-dark);
+        background-image: url("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .founder-text h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .founder-text p {
+        font-size: 14px;
+        color: var(--mid);
+        line-height: 1.65;
+      }
+      .founder-sig {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 20px;
+        margin-top: 14px;
+        color: var(--charcoal);
+      }
+
+      /* ── PROCESS ── */
+      .process {
+        padding: 72px 80px;
+        background: var(--cream);
+        border-top: 1px solid var(--border);
+      }
+      .process-intro {
+        font-size: clamp(20px, 2.5vw, 30px);
+        font-weight: 400;
+        max-width: 540px;
+        line-height: 1.45;
+        margin-bottom: 56px;
+      }
+      .process-intro strong {
+        font-weight: 600;
+      }
+      .process-steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+      }
+      .step-num {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--mid);
+        margin-bottom: 10px;
+      }
+      .step-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .step-desc {
+        font-size: 13px;
+        color: var(--mid);
+        line-height: 1.6;
+      }
+      .step-img {
+        width: 100%;
+        aspect-ratio: 4/3;
+        border-radius: 8px;
+        object-fit: cover;
+        background: var(--cream-dark);
+        margin-top: 16px;
+      }
+      .step-img.s1 {
+        background-image: url("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .step-img.s2 {
+        background-image: url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .step-img.s3 {
+        background-image: url("https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=400&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .step-img.s4 {
+        background-image: url("https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=400&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .process-cta {
+        margin-top: 16px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent-blue);
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      /* ── BRAND TICKER ── */
+      .ticker-wrap {
+        background: var(--charcoal);
+        color: var(--white);
+        padding: 18px 0;
+        overflow: hidden;
+        position: relative;
+      }
+      .ticker {
+        display: flex;
+        gap: 64px;
+        animation: ticker 22s linear infinite;
+        white-space: nowrap;
+      }
+      .ticker-item {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.6;
+      }
+      .ticker-item span {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 4px;
+      }
+      @keyframes ticker {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ── MARKETING SECTION ── */
+      .marketing {
+        padding: 80px 80px;
+        background: var(--cream);
+        border-top: 1px solid var(--border);
+      }
+      .marketing h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(26px, 3.2vw, 44px);
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .marketing-sub {
+        text-align: center;
+        color: var(--mid);
+        font-size: 15px;
+        margin-bottom: 52px;
+      }
+      .marketing-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .mcard {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border);
+      }
+      .mcard-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--mid);
+        margin-bottom: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .chat-bubble {
+        background: var(--cream);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+      }
+      .chat-bubble.reply {
+        background: #ebf5ff;
+      }
+      .feature-list li {
+        font-size: 13px;
+        color: var(--mid);
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+      }
+      .feature-list li:last-child {
+        border-bottom: none;
+      }
+      .tag-pill {
+        display: inline-block;
+        background: var(--cream);
+        color: var(--charcoal);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 4px 4px 4px 0;
+      }
+      .tag-pill.active {
+        background: var(--charcoal);
+        color: var(--white);
+      }
+
+      /* ── DREAM BIG ── */
+      .dream {
+        padding: 80px 80px;
+        background: var(--cream-dark);
+      }
+      .dream h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(26px, 3.2vw, 42px);
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      .dream h2 em {
+        font-style: italic;
+        color: var(--accent-teal);
+      }
+      .dream-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+      }
+      .dream-text p {
+        font-size: 15px;
+        color: var(--mid);
+        line-height: 1.75;
+        margin-bottom: 14px;
+      }
+      .dream-text ul {
+        padding-left: 20px;
+      }
+      .dream-text ul li {
+        font-size: 14px;
+        color: var(--mid);
+        line-height: 1.7;
+        margin-bottom: 6px;
+      }
+      .dream-img-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .dimg {
+        border-radius: 10px;
+        aspect-ratio: 4/3;
+        background: var(--cream-dark);
+        background-size: cover;
+        background-position: center;
+      }
+      .dimg.d1 {
+        background-image: url("https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&q=80");
+      }
+      .dimg.d2 {
+        background-image: url("https://images.unsplash.com/photo-1549451371-64aa98a6f660?w=400&q=80");
+      }
+      .dimg.d3 {
+        background-image: url("https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80");
+      }
+      .dimg.d4 {
+        background-image: url("https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&q=80");
+      }
+
+      /* ── TESTIMONIALS ── */
+      .testimonials {
+        padding: 72px 80px;
+        background: var(--cream);
+        border-top: 1px solid var(--border);
+      }
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      .tcard {
+        background: var(--white);
+        border-radius: 10px;
+        padding: 20px;
+        font-size: 13px;
+        line-height: 1.65;
+        color: var(--mid);
+        border: 1px solid var(--border);
+      }
+      .tcard-logo {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--charcoal);
+        margin-bottom: 14px;
+      }
+      .tcard-author {
+        font-size: 12px;
+        color: var(--light);
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tcard-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--cream-dark);
+        flex-shrink: 0;
+      }
+
+      /* ── FAQ ── */
+      .faq {
+        padding: 80px 80px;
+        background: var(--cream);
+        border-top: 1px solid var(--border);
+      }
+      .faq h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(24px, 3vw, 40px);
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .faq-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 36px;
+        flex-wrap: wrap;
+      }
+      .faq-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1.5px solid var(--border);
+        background: transparent;
+        color: var(--mid);
+        transition: all 0.2s;
+      }
+      .faq-tab.active {
+        background: var(--charcoal);
+        color: var(--white);
+        border-color: var(--charcoal);
+      }
+      .faq-list {
+        max-width: 720px;
+      }
+      .faq-item {
+        border-bottom: 1px solid var(--border);
+        padding: 18px 0;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+      .faq-item:first-child {
+        border-top: 1px solid var(--border);
+      }
+      .faq-q {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .faq-icon {
+        font-size: 18px;
+        color: var(--mid);
+      }
+
+      /* ── CTA SECTION ── */
+      .cta-section {
+        padding: 72px 80px;
+        background: var(--cream-dark);
+        border-top: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 64px;
+        align-items: center;
+      }
+      .cta-left h2 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(22px, 2.5vw, 34px);
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 18px;
+      }
+      .cta-left ul {
+        list-style: none;
+      }
+      .cta-left ul li {
+        font-size: 14px;
+        color: var(--mid);
+        padding: 6px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .cta-left ul li::before {
+        content: "✓";
+        color: var(--accent-teal);
+        font-weight: 700;
+      }
+      .cta-form {
+        background: var(--white);
+        border-radius: 14px;
+        padding: 32px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      .form-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 24px;
+        border: 1.5px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .form-tab {
+        flex: 1;
+        text-align: center;
+        padding: 9px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        color: var(--mid);
+        background: transparent;
+        border: none;
+      }
+      .form-tab.active {
+        background: var(--charcoal);
+        color: var(--white);
+      }
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .form-field label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--mid);
+      }
+      .form-field input,
+      .form-field select {
+        padding: 10px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        background: var(--cream);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .form-field input:focus,
+      .form-field select:focus {
+        border-color: var(--charcoal);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .form-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--mid);
+        margin: 12px 0;
+      }
+      .form-check input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--charcoal);
+      }
+      .btn-form {
+        width: 100%;
+        background: var(--charcoal);
+        color: var(--white);
+        border: none;
+        padding: 13px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .btn-form:hover {
+        opacity: 0.85;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: var(--dark-bg);
+        color: rgba(255, 255, 255, 0.55);
+        padding: 52px 80px 32px;
+      }
+      .footer-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+      }
+      .footer-brand {
+        max-width: 240px;
+      }
+      .footer-brand .logo-box {
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 14px;
+      }
+      .footer-brand p {
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .footer-tagline {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .footer-col h4 {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 14px;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        margin-bottom: 8px;
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 24px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-social {
+        display: flex;
+        gap: 16px;
+      }
+      .footer-social a {
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+      }
+      .footer-social a:hover {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        nav {
+          padding: 12px 24px;
+        }
+        .trust-bar,
+        .process,
+        .marketing,
+        .dream,
+        .testimonials,
+        .faq,
+        .cta-section,
+        footer {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+        .process-steps {
+          grid-template-columns: 1fr 1fr;
+        }
+        .testi-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .marketing-grid {
+          grid-template-columns: 1fr;
+        }
+        .dream-grid {
+          grid-template-columns: 1fr;
+        }
+        .cta-section {
+          grid-template-columns: 1fr;
+        }
+        .footer-top {
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 580px) {
+        .process-steps,
+        .testi-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-row {
+          gap: 32px;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <!-- <div class="nav-logo">⬡ SOILUNZ</div> -->
+      <div class="nav-logo">
+        <img src="assets/logo.png" alt="SOILUNZ Logo" />
+      </div>
+
+      <div class="nav-links">
+        <a href="#">Services</a>
+        <a href="#">Work</a>
+        <a href="#">About</a>
+        <a href="#">Pricing</a>
+        <a href="#">Blog</a>
+      </div>
+      <button class="nav-cta">Get a Quote</button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Design &amp; Technology Studio</p>
+        <h1>The Intelligent <em>File Browser</em></h1>
+        <p class="hero-sub">
+          Smart media management backed by AI — built for pharma, biotech, and
+          the teams that move fast.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-primary">Get Started Free</button>
+          <button class="btn-outline">View Our Work</button>
+        </div>
+      </div>
+      <div class="hero-scroll">↓ SCROLL</div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <section class="trust-bar">
+      <h2>Trusted by the largest builder community in AI</h2>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-num">100M+</div>
+          <div class="stat-label">Files processed globally</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">6K+</div>
+          <div class="stat-label">Active enterprise clients</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">
+            5<span
+              style="
+                font-size: 0.45em;
+                font-weight: 400;
+                color: var(--mid);
+                margin-left: 4px;
+              "
+              >Stars on G2</span
+            >
+          </div>
+          <div class="stat-label">Rated #1 on G2 '25</div>
+        </div>
+      </div>
+      <div class="founder-block">
+        <div class="founder-img"></div>
+        <div class="founder-text">
+          <h3>Founder-led. Built with operators. Backed by the best.</h3>
+          <p>
+            Soilunz was started by operators, not theorists. Our Founder &amp;
+            CEO Ujon Konar has previously co-founded companies in enterprise
+            monitoring and biotech, backed by Series B VCs, and brings deep
+            technical and go-to-market expertise.<br /><br />Today, Ujon is
+            building the system of record for enterprise compliance, giving
+            teams at mid-size companies and enterprise R&amp;D mission to
+            operate with leverage in the age of AI.
+          </p>
+          <div class="founder-sig">Ujon Konar</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="process">
+      <p class="process-intro">
+        <strong>Our work follows a clear, structured process,</strong> allowing
+        creativity to sit alongside commercial and technical rigour.
+      </p>
+      <div class="process-steps">
+        <div>
+          <div class="step-num">01</div>
+          <div class="step-title">Pre-Concept</div>
+          <div class="step-desc">
+            We start every engagement with a deep discovery process, aligning on
+            goals, users, and business constraints.
+          </div>
+          <div class="step-img s1"></div>
+          <a href="#" class="process-cta">LEARN MORE ↗</a>
+        </div>
+        <div>
+          <div class="step-num">02</div>
+          <div class="step-title">Concept/Design</div>
+          <div class="step-desc">
+            Rapid wireframes, style explorations, and design systems built to
+            scale across every surface.
+          </div>
+          <div class="step-img s2"></div>
+          <a href="#" class="process-cta">LEARN MORE ↗</a>
+        </div>
+        <div>
+          <div class="step-num">03</div>
+          <div class="step-title">Schematic Design</div>
+          <div class="step-desc">
+            Detailed schematics, component specs, and developer-ready hand-off
+            that eliminates guesswork.
+          </div>
+          <div class="step-img s3"></div>
+          <a href="#" class="process-cta">LEARN MORE ↗</a>
+        </div>
+        <div>
+          <div class="step-num">04</div>
+          <div class="step-title">Detail Design</div>
+          <div class="step-desc">
+            Final pixel-perfect execution with quality assurance, motion, and
+            accessibility baked in.
+          </div>
+          <div class="step-img s4"></div>
+          <a href="#" class="process-cta">LEARN MORE ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRAND TICKER -->
+    <div class="ticker-wrap" aria-hidden="true">
+      <div class="ticker">
+        <span class="ticker-item">BLACK CAPITAL <span>✦</span></span>
+        <span class="ticker-item">INVESTOR FUND <span>✦</span></span>
+        <span class="ticker-item">02 VENTURES <span>✦</span></span>
+        <span class="ticker-item">Designer Fund <span>✦</span></span>
+        <span class="ticker-item">BLACK CAPITAL <span>✦</span></span>
+        <span class="ticker-item">INVESTOR FUND <span>✦</span></span>
+        <span class="ticker-item">02 VENTURES <span>✦</span></span>
+        <span class="ticker-item">Designer Fund <span>✦</span></span>
+        <span class="ticker-item">BLACK CAPITAL <span>✦</span></span>
+        <span class="ticker-item">INVESTOR FUND <span>✦</span></span>
+        <span class="ticker-item">02 VENTURES <span>✦</span></span>
+        <span class="ticker-item">Designer Fund <span>✦</span></span>
+        <!-- duplicate for seamless loop -->
+        <span class="ticker-item">BLACK CAPITAL <span>✦</span></span>
+        <span class="ticker-item">INVESTOR FUND <span>✦</span></span>
+        <span class="ticker-item">02 VENTURES <span>✦</span></span>
+        <span class="ticker-item">Designer Fund <span>✦</span></span>
+        <span class="ticker-item">BLACK CAPITAL <span>✦</span></span>
+        <span class="ticker-item">INVESTOR FUND <span>✦</span></span>
+        <span class="ticker-item">02 VENTURES <span>✦</span></span>
+        <span class="ticker-item">Designer Fund <span>✦</span></span>
+      </div>
+    </div>
+
+    <!-- MARKETING -->
+    <section class="marketing">
+      <h2>Make your marketing as<br />good as the big brands</h2>
+      <p class="marketing-sub">
+        Stop marketing on a shoestring — your next big campaign is right here,
+        ready to deploy.
+      </p>
+      <div class="marketing-grid">
+        <div class="mcard">
+          <div class="mcard-title">Don't let another lead slip through</div>
+          <div class="chat-bubble">
+            "I want to learn more about your product but I'm short on time…"
+          </div>
+          <div class="chat-bubble reply">
+            "No worries — here's a 60-second overview tailored to your use case.
+            🚀"
+          </div>
+          <div class="chat-bubble">
+            "That's exactly what I needed. Can we book a call?"
+          </div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-title">Positioning / Dashboard</div>
+          <ul class="feature-list">
+            <li>
+              <span>Multi-channel campaigns</span>
+              <span style="color: var(--accent-teal)">✓ Active</span>
+            </li>
+            <li>
+              <span>AI copy generation</span>
+              <span style="color: var(--accent-teal)">✓ Active</span>
+            </li>
+            <li>
+              <span>Lead scoring</span>
+              <span style="color: var(--mid)">2 sources</span>
+            </li>
+            <li>
+              <span>Analytics reports</span>
+              <span style="color: var(--mid)">8 pending</span>
+            </li>
+            <li>
+              <span>A/B testing</span>
+              <span style="color: var(--accent-teal)">✓ Running</span>
+            </li>
+          </ul>
+        </div>
+        <div class="mcard">
+          <div class="mcard-title">Help Hub</div>
+          <p style="font-size: 13px; color: var(--mid); margin-bottom: 12px">
+            Welcome to The Baker House — your AI-powered concierge for answers.
+          </p>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <span class="tag-pill active">Billing</span>
+            <span class="tag-pill">Integrations</span>
+            <span class="tag-pill">Onboarding</span>
+            <span class="tag-pill">API docs</span>
+          </div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-title">Lido Login: data share</div>
+          <p style="font-size: 13px; color: var(--mid); margin-bottom: 12px">
+            Your partners get exactly what they need — nothing more, nothing
+            less.
+          </p>
+          <div
+            style="background: var(--cream); border-radius: 8px; padding: 14px"
+          >
+            <div style="font-size: 12px; color: var(--mid); margin-bottom: 8px">
+              Access level
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <span class="tag-pill active">Read-only</span>
+              <span class="tag-pill">Write</span>
+              <span class="tag-pill">Admin</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DREAM BIG -->
+    <section class="dream">
+      <div class="dream-grid">
+        <div class="dream-text">
+          <h2>Don't Just Dream Big — <br /><em>Let's Make It Happen!</em></h2>
+          <p>
+            For over a decade, we have sat at the frontier of turning bold,
+            ambitious ideas into ground-breaking solutions. At the core of our
+            culture, we maintain the values that have helped us inspire the
+            creators and products that define an industry. Every project we take
+            on is a genuine vote of confidence — we only take work we know we
+            can make extraordinary.
+          </p>
+          <p>
+            Launching a startup or transforming an enterprise — we can help you
+            go the extra mile. Updates are our team feel the steps necessary to
+            build with extraordinary craft, not just adequacy. We are the extra
+            pair of hands that helps translate vision into execution, and
+            ensures the highest standards of quality are met.
+          </p>
+          <p>
+            It is rare to find a company truly willing to do the extraordinary.
+            We are. Find us where extraordinary is the starting line.
+          </p>
+          <ul>
+            <li>Strategy &amp; product vision</li>
+            <li>Design systems that scale</li>
+            <li>Full-stack engineering</li>
+          </ul>
+        </div>
+        <div class="dream-img-grid">
+          <div class="dimg d1"></div>
+          <div class="dimg d2"></div>
+          <div class="dimg d3"></div>
+          <div class="dimg d4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials">
+      <div class="testi-grid">
+        <div class="tcard">
+          <div class="tcard-logo">TETEVO</div>
+          <p>
+            "Soilunz completely transformed how our compliance team handles
+            documents. We cut review time by 60% in the first month."
+          </p>
+          <div class="tcard-author">
+            <div class="tcard-avatar"></div>
+            <div>Sarah M. · Head of Compliance</div>
+          </div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-logo">BETEVO</div>
+          <p>
+            "Their design process is unlike anything we've worked with.
+            Rigorous, creative, and they actually ship on time."
+          </p>
+          <div class="tcard-author">
+            <div class="tcard-avatar"></div>
+            <div>James K. · CTO</div>
+          </div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-logo" style="font-style: italic">illust</div>
+          <p>
+            "We've tried every file management tool out there. Nothing came
+            close to the intelligence Soilunz brings out of the box."
+          </p>
+          <div class="tcard-author">
+            <div class="tcard-avatar"></div>
+            <div>Priya N. · Creative Director</div>
+          </div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-logo">✦ Ferry</div>
+          <p>
+            "Founder-led, mission-driven, and genuinely brilliant at what they
+            do. A true partner, not just a vendor."
+          </p>
+          <div class="tcard-author">
+            <div class="tcard-avatar"></div>
+            <div>Marco T. · Founder</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq">
+      <h2>FAQ</h2>
+      <div class="faq-tabs" style="margin-top: 16px">
+        <button class="faq-tab active">General</button>
+        <button class="faq-tab">Pricing</button>
+        <button class="faq-tab">Security</button>
+        <button class="faq-tab">Integrations</button>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <span class="faq-q">What is Determ?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-item">
+          <span class="faq-q"
+            >How does Determ differ from other media monitoring tools?</span
+          >
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-item">
+          <span class="faq-q">What sources does Determ monitor?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-item">
+          <span class="faq-q">Can I add more sources to Determ?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-item">
+          <span class="faq-q">What languages does Determ monitor?</span>
+          <span class="faq-icon">+</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+      <div class="cta-left">
+        <h2>
+          By Working With Soilunz, You Will Get a Combo of Technology +
+          Management.
+        </h2>
+        <ul>
+          <li>Once we connect, we detect it no matter what happens</li>
+          <li>After we go public separately we want to do it all</li>
+          <li>We don't want to assist you, we run the thing</li>
+        </ul>
+      </div>
+      <div class="cta-form">
+        <div class="form-tabs">
+          <button class="form-tab active">Get a Quote</button>
+          <button class="form-tab">Book a Call</button>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Name</label>
+            <input type="text" placeholder="Your name" />
+          </div>
+          <div class="form-field">
+            <label>Email</label>
+            <input type="email" placeholder="you@company.com" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Phone</label>
+            <input type="tel" placeholder="+1 000 000 0000" />
+          </div>
+          <div class="form-field">
+            <label>Company size</label>
+            <select>
+              <option>Select size</option>
+              <option>1–10</option>
+              <option>11–50</option>
+              <option>51–200</option>
+              <option>200+</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Tell us briefly about your goals for this project</label>
+          <input
+            type="text"
+            placeholder="e.g. Redesign our dashboard for Q3 launch"
+          />
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="agree" />
+          <label for="agree"
+            >I'm ok to sign up with Soilunz terms of service</label
+          >
+        </div>
+        <button class="btn-form">Submit Your Request →</button>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo-box">⬡</div>
+          <p class="footer-tagline">
+            The AI partner of choice for top pharma and biotechs
+          </p>
+          <p>
+            Soilunz helps life-science teams manage, search, and automate
+            document workflows with AI precision.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#">Features</a>
+          <a href="#">Pricing</a>
+          <a href="#">Changelog</a>
+          <a href="#">Roadmap</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+          <a href="#">Security</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="#">Twitter / X</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">GitHub</a>
+          <a href="#">hello@soilunz.com</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 Soilunz Inc. All rights reserved.</span>
+        <div class="footer-social">
+          <a href="#">Twitter</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">GitHub</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // FAQ toggle
+      document.querySelectorAll(".faq-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const icon = item.querySelector(".faq-icon");
+          icon.textContent = icon.textContent === "+" ? "−" : "+";
+        });
+      });
+      // FAQ tabs
+      document.querySelectorAll(".faq-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".faq-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+        });
+      });
+      // Form tabs
+      document.querySelectorAll(".form-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".form-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
